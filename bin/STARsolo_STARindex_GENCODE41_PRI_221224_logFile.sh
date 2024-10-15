@@ -1,21 +1,35 @@
 #!/usr/bin/env bash
 
 ### GENCODE v41
-### Primary assembly (PRI) 
-wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/GRCh38.primary_assembly.genome.fa.gz
+### Primary assembly (PRI)
+
+wget -O $GENOME_ASSEMBLY https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/GRCh38.primary_assembly.genome.fa.gz
 
 ### Comprehensive PRI gtf file
-wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/gencode.v41.primary_assembly.annotation.gtf.gz
+wget -O $GENOME_ANNOTATION https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/gencode.v41.primary_assembly.annotation.gtf.gz
 
-gunzip *
+gunzip $REF_PARENT_DIR/*
 
-### Make GRCh38 PRI GENCODE v41 index
-STAR --runThreadN 20 \
- --runMode genomeGenerate \
- --genomeDir ~/ref/reference_20220827/human_GRCh38_gencodev41/GRCh38_index \
- --genomeFastaFiles GRCh38.primary_assembly.genome.fa \
- --sjdbGTFfile gencode.v41.primary_assembly.annotation.gtf \
- --sjdbOverhang 149
+grch38refpath=$REF_PARENT_DIR/ref/reference_20220827/human_GRCh38_gencodev41/GRCh38_index
+mkdir -p $grch38refpath
+# ### Make GRCh38 PRI GENCODE v41 index
+# STAR --runThreadN 36 \
+#  --runMode genomeGenerate \
+#  --genomeDir $grch38refpath \
+#  --genomeFastaFiles $REF_PARENT_DIR/GRCh38.primary_assembly.genome.fa \
+#  --sjdbGTFfile $REF_PARENT_DIR/gencode.v41.primary_assembly.annotation.gtf \
+#  --sjdbOverhang 149
+
+
+mkdir $REF_PARENT_DIR/ref/reference_20220827/human_GRCh38_gencodev41_new
+STAR --runThreadN 32 \
+     --runMode genomeGenerate \
+     --genomeDir $REF_PARENT_DIR/ref/reference_20220827/human_GRCh38_gencodev41_new \
+     --genomeFastaFiles $REF_PARENT_DIR/GRCh38.primary_assembly.genome.fa \
+     --sjdbGTFfile $REF_PARENT_DIR/gencode.v41.primary_assembly.annotation.gtf \
+     --sjdbOverhang 149
+
+
 
 # Aug 27 02:03:42 ..... started STAR run
 # Aug 27 02:03:42 ... starting to generate Genome files
